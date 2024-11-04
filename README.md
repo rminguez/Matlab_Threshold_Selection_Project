@@ -54,6 +54,10 @@ Uses the **Cramer-Von Mises Test** to determine the best threshold for data exce
 ### `RWLSfit.m`
 Performs robust weighted least squares regression, used for calculating residuals in the **Studentized Residuals Method**.
 
+## Compatibility
+
+This project has been tested using MATLAB 2016. Compatibility with other versions of MATLAB has not been fully verified, so we recommend using MATLAB 2016 for best results.
+
 ## Usage Instructions
 
 1. **Download and Install Matlab**: Ensure Matlab is installed and configured on your system.
