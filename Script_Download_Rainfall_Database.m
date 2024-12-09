@@ -1,3 +1,25 @@
+% README FILE FOR DAILY GLOBAL HISTORICAL CLIMATOLOGY NETWORK (GHCN-DAILY) 
+% Version 3.31
+
+% --------------------------------------------------------------------------------
+% How to cite:
+% 
+% Note that the GHCN-Daily dataset itself now has a DOI (Digital Object Identifier)
+% so it may be relevant to cite both the methods/overview journal article as well 
+% as the specific version of the dataset used.
+% 
+% The journal article describing GHCN-Daily is:
+% Menne, M.J., I. Durre, R.S. Vose, B.E. Gleason, and T.G. Houston, 2012:  An overview 
+% of the Global Historical Climatology Network-Daily Database.  Journal of Atmospheric 
+% and Oceanic Technology, 29, 897-910, doi:10.1175/JTECH-D-11-00103.1.
+% 
+% To acknowledge the specific version of the dataset used, please cite:
+% Menne, M.J., I. Durre, B. Korzeniewski, S. McNeill, K. Thomas, X. Yin, S. Anthony, R. Ray, 
+% R.S. Vose, B.E.Gleason, and T.G. Houston, 2012: Global Historical Climatology Network - 
+% Daily (GHCN-Daily), Version 3.31.
+% NOAA National Climatic Data Center. http://doi.org/10.7289/V5D21VHZ [2024101719 [yyyymmddhh] UTC].
+% --------------------------------------------------------------------------------
+
 % Define data and figures directories
 data_folder = 'data';
 figures_folder = 'figures';

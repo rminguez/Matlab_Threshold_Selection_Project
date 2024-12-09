@@ -1,67 +1,78 @@
-% % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % % %   SCRIPT para optimizar la selección del umbral Registro RCP_ASN00021043
-% % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % % %   SCRIPT to optimize the selection of the threshold for Record PRCP_ASN00021043
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 clear all
 close all
 clc
 actualpath=pwd;
 
-%   Añado las carpetas con los paths
+% Add folders to the paths
 addpath([actualpath '\matlab_functions'])
 
-%%  Graficado de los datos
-% %
-graficos = 1;
+%% Plotting the data
+% 
+graficos = 1; % Enable/disable graphics
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   REGIMEN EXTREMAL ANUAL DE LAS SERIES
+%   EXTREMAL ANNUAL REGIME OF THE SERIES
 %%%%%%%%
 if exist(['figures\PaperThreshold'],'dir')~=7,
-    mkdir(['figures\PaperThreshold'])
+    mkdir(['figures\PaperThreshold']) % Create a directory for figures if it doesn't exist
 end
 
 ejemplo='PRCP_ASN00021043';
 
-%   Si existe hago la lectura del fichero
+% If it exists, read the file
 if strcmp(ejemplo,'PRCP_ASN00021043'),
-    %exist([actualpath '\data\NOAA-NCDCprecipitations\PRCP_ASN00021043.csv'],'file')==2,
-    
+    % If the file exists, proceed to read it
     data=readtable([actualpath '\data\PRCP_ASN00021043.csv'],'TreatAsEmpty',{'NA'},'format','%s%f');
-    % Antes de hacer nada vamos a eliminar los registros nulos o NaN
-    % Verificar la segunda columna (precipitación)
+    % Before doing anything, remove null or NaN records
+    % Verify the second column (precipitation)
     rowsToDelete = isnan(data{:, 2});
 
-    % Eliminar las filas que cumplen la condición
+    % Remove rows that meet the condition
     data(rowsToDelete, :) = [];
     
-        %
+    % Assign the data to the pluviometer structure
     pluviometros.nombre = 'PRCP_ASN00021043';
     pluviometros.datenum =datenum(data{:,1});
     pluviometros.fechas =data{:,1};
-    pluviometros.data =data{:,2}/10;
+    pluviometros.data =data{:,2}/10; % Convert units if necessary
     
-    % Calcular la distancia mínima entre registros consecutivos en el tiempo
-    % Esto se asume que es la distancia en días
+    % Calculate the minimum time difference between consecutive records
+    % This is assumed to be in days
     min_time_diff = min(diff(pluviometros.datenum));
     
-    % Definir la distancia mínima entre picos en unidades temporales
-    % Por ejemplo, la distancia mínima será el doble de la distancia mínima entre registros
+    % Define the minimum distance between peaks in temporal units
+    % For example, the minimum distance will be twice the minimum distance between records
     min_peak_distance = 2 * min_time_diff;
     
-    %   La ejecucion con un n la guardo en el fichero
-    %   workspaceMC_POT_AM_n.mat
+    % Save the execution with 'n' in the file workspaceMC_POT_AM_n.mat
 % % %     load(['PRCP_ASN00021043.mat'])
     threshold0 = 2.0;
 end
 
-%   Defino un threshold inicial
+% Define an initial threshold
 threshold=0.0; 
-n0=10;
-siglevel=0.01;
-%   Extraigo todos los thresholds válidis en orden y sus correspondientes
-%   medias de excedencias y pesos
-[pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks, locs] = threshold_peak_extraction(pluviometros.data,threshold,n0,min_peak_distance);
+n0=10; % Minimum number of peaks for valid statistics
+siglevel=0.01; % Significance level for statistical tests
+% Extract all valid thresholds in order and their corresponding
+% mean exceedances and weights
+[pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks, locs, autocorrelations] = threshold_peak_extraction(pluviometros.data,threshold,n0,min_peak_distance);
 
-% Opcional: Gráfico de los residuos estudentizados
+% Check independence
+for i=1:size(autocorrelations,1),
+    if autocorrelations(i,3)<siglevel,
+        fprintf('Lag %d: Significant autocorrelation (%.4f), p-val (%.4f)\n', ...
+                autocorrelations(i,1), autocorrelations(i,2), autocorrelations(i,3));
+    else
+        fprintf('Lag %d: No Significant autocorrelation (%.4f), p-val (%.4f)\n', ...
+                autocorrelations(i,1), autocorrelations(i,2), autocorrelations(i,3));
+    end
+end
+
+% Optional: Plot the studentized residuals
 if graficos,
     % Create the figure
     fonsiz = 18;
@@ -137,8 +148,6 @@ if graficos,
     
 end
 
-
-
 %% Method using studentized residuals and the smoothing spline
 if graficos,
     [threshold_val_SR,beta,fobj,r] = threshold_studentized_residuals(pks_unicos_valid, excedencias_mean_valid, excedencias_weight_valid, siglevel, true,['figures\PaperThreshold\' ejemplo],false);
@@ -147,22 +156,18 @@ else
 end
 
 %% Langousis method
-
 if graficos,
     threshold_val_MSE = threshold_MSE(pks_unicos_valid, excedencias_mean_valid, excedencias_weight_valid, n0, [], true,['figures\PaperThreshold\' ejemplo]);
 else
     threshold_val_MSE = threshold_MSE(pks_unicos_valid, excedencias_mean_valid, excedencias_weight_valid, n0);
 end
 
-%% Anderson_darling method
-
+%% Anderson-Darling method
 threshold_val_AD = threshold_AD(pluviometros.data, siglevel);
 threshold_val_AD = threshold_AD(pks, siglevel);
 
-%% Crame-Von Misses
+%% Cramer-Von Mises method
 threshold_val_CVM = threshold_CVM(pluviometros.data, siglevel);
 threshold_val_CVM = threshold_CVM(pks, siglevel);
 
 [threshold_val_SR,threshold_val_MSE,threshold_val_AD,threshold_val_CVM]
-
-

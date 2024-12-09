@@ -34,6 +34,12 @@ Analyzes and visualizes the results from the threshold selection process. Genera
 ### `Script_New_PRCP_ASN00021043.m`
 Illustrates the application of these methods on a single station (`PRCP_ASN00021043`). It generates individual threshold selections and visualizes the precipitation time series with independent peaks marked.
 
+### `Script_NewSimulationExperiment.m`
+Conducts new simulation experiments to assess the performance of threshold selection methods under varying conditions, including synthetic datasets with different parameters, such as rounding levels, shape parameters, and scale parameters. The results are stored in structured files for subsequent analysis.
+
+### `Script_NewSimExpAnalysisResults.m`
+Analyzes the results of the new simulation experiments, comparing the performance of threshold selection methods. This includes generating detailed statistical summaries, comparison plots (e.g., threshold variances and CPU times), and evaluating the accuracy of the methods based on known true thresholds in the synthetic data.
+
 ## Core Functions
 
 ### `threshold_peak_extraction.m`

@@ -1,4 +1,4 @@
-function [pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks, locs] = threshold_peak_extraction(data,threshold,n0,min_peak_distance)
+function [pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks, locs, autocorrelations] = threshold_peak_extraction(data,threshold,n0,min_peak_distance)
 %THRESHOLD_PEAK_EXTRACTION Extracts independent peaks over a threshold from data.
 % This function identifies peaks in a dataset that exceed a specified 
 % threshold and computes statistics such as mean exceedances, variances, 
@@ -15,8 +15,10 @@ function [pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks,
 % pks_unicos_valid           - Valid unique peaks after removing NaN values
 % excedencias_mean_valid     - Mean exceedances for valid peaks
 % excedencias_weight_valid   - Weights based on exceedance variance for valid peaks
-% pks                       - All detected peaks
-% locs                      - Indices of the detected peaks in the data
+% pks                        - All detected peaks
+% locs                       - Indices of the detected peaks in the data
+% autocorrelations           - Lags, correlations and pvalues to check the
+%                              independence assumption
 %
 % This function implements the Peaks Over Threshold (POT) method with the 
 % requirement of independent peaks to avoid biases caused by dependent extremes.
@@ -25,6 +27,19 @@ function [pks_unicos_valid,excedencias_mean_valid,excedencias_weight_valid, pks,
     [pks, locs] = findpeaks(max(data-threshold,0), ...
                         'MinPeakDistance', min_peak_distance);
     
+    
+    % Calculate the autocorrelation of the peaks for lags 1 to 5
+    num_lags = 5; % Number of lags to check
+    if length(pks) > num_lags
+        autocorrelations = zeros(num_lags,3); % Preallocate space for autocorrelations
+        for lag = 1:num_lags
+            autocorrelations(lag,1)=lag;
+            [autocorrelations(lag,2),autocorrelations(lag,3)] = corr(pks(1:end-lag), pks(lag+1:end));
+        end
+    else
+        autocorrelations = [];
+    end
+                    
     %%%%%%%%%%%%%%%%%%
 
     % Eliminate duplicate peaks and sort them in ascending order

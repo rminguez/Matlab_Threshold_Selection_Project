@@ -49,7 +49,7 @@ function [threshold,beta,fobj,r] = threshold_studentized_residuals(pks_unicos_va
 
         % Plot residuals if requested
         if plot_flag
-            fonsiz = 18;
+            fonsiz = 24;
             scrsz = get(0, 'ScreenSize');
             figure('Position', [1 1 scrsz(3) scrsz(4)]);
             ax_ = newplot;
@@ -69,8 +69,8 @@ function [threshold,beta,fobj,r] = threshold_studentized_residuals(pks_unicos_va
             hold off;
             leginfo_ = {'Orientation', 'vertical', 'Location', 'NorthEast'};
             h_ = legend(ax_, legh_, legt_, leginfo_{:});  % create legend
-            set(h_, 'FontName', 'Montserrat', 'FontSize', fonsiz, 'Interpreter', 'latex');
-            set(gca, 'FontName', 'Montserrat', 'FontSize', fonsiz, 'TickLabelInterpreter', 'latex');
+            set(h_, 'FontSize', fonsiz, 'Interpreter', 'latex');
+            set(gca, 'FontSize', fonsiz, 'TickLabelInterpreter', 'latex');
             set(gcf, 'PaperPositionMode', 'auto');
             if ~isempty(filename)
                 saveas(gcf, [filename 'StudenRes' num2str(it)], 'png');
@@ -167,7 +167,7 @@ function [threshold,beta,fobj,r] = threshold_studentized_residuals(pks_unicos_va
 
         if ploteat
             % Plot fit with data.
-            fonsiz = 18;
+            fonsiz = 24;
             scrsz = get(0, 'ScreenSize');
             figure('Position', [1 1 scrsz(3) scrsz(4)]);
             ax_ = newplot;
@@ -183,11 +183,11 @@ function [threshold,beta,fobj,r] = threshold_studentized_residuals(pks_unicos_va
             legh_(end + 1) = h_;
             legt_{end + 1} = ['Local optimum'];
             hh = xlabel('Threshold $u$');
-            set(hh, 'FontName', 'Montserrat', 'FontSize', fonsiz, 'Interpreter', 'latex');
+            set(hh, 'FontSize', fonsiz, 'Interpreter', 'latex');
             hh = ylabel('$r^N$');
-            set(hh, 'FontName', 'Montserrat', 'FontSize', fonsiz, 'Interpreter', 'latex');
+            set(hh, 'FontSize', fonsiz, 'Interpreter', 'latex');
             legend(ax_, legh_, legt_, 'Orientation', 'vertical', 'Location', 'NorthEast');
-            set(gca, 'FontName', 'Montserrat', 'FontSize', fonsiz, 'TickLabelInterpreter', 'latex');
+            set(gca, 'FontSize', fonsiz, 'TickLabelInterpreter', 'latex');
             set(gcf, 'PaperPositionMode', 'auto');
             if ~isempty(filename)
                 saveas(gcf, [filename '.png']);

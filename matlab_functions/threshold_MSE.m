@@ -73,7 +73,7 @@ function local_minima = threshold_MSE(pks_unicos_valid, excedencias_mean_valid, 
     % Step 5 (Optional): Plot if plot_flag is true
     if plot_flag
         
-        fonsiz = 18;
+        fonsiz = 24;
         scrsz = get(0, 'ScreenSize');
 
         % Create a new figure with screen size
